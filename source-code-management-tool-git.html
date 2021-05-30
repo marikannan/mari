@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+        <title>"Source Code Management Tool - Git"</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+        <meta name="description" content="This is post will give quick tips for working with github. List Config To list configuration details, git config --list Set Config ( global ) To..." />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">marikannan's blog</a></h1>
+                <nav><ul>
+                    <li><a href="/category/blog.html">blog</a></li>
+                    <li><a href="/pages/about.html">about</a></li>
+                    <li><a href="/pages/contact.html">contact</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/source-code-management-tool-git.html" rel="bookmark"
+           title="Permalink to "Source Code Management Tool - Git"">"Source Code Management Tool - Git"</a></h1>
+    </header>
+
+    <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2018-04-01T21:51:30+05:30">
+                Published: Sun 01 April 2018
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->      <p>This is post will give quick tips for working with github.</p>
+<h2>List Config</h2>
+<p>To list configuration details,</p>
+<div class="highlight"><pre><span></span><code>    git config --list
+</code></pre></div>
+
+<h2>Set Config ( global )</h2>
+<p>To set configuration parameters globally ie. to use for all repositories.</p>
+<div class="highlight"><pre><span></span><code>    git config --global user.name <span class="s2">&quot;&lt;username&gt;&quot;</span>
+    git config --global user.email <span class="s2">&quot;&lt;email address&gt;&quot;</span>
+</code></pre></div>
+
+<p>To set configuration parameters for a specific repository,</p>
+<div class="highlight"><pre><span></span><code>    git config user.name <span class="s2">&quot;&lt;username&gt;&quot;</span>
+    git config user.email <span class="s2">&quot;&lt;email address&gt;&quot;</span>
+</code></pre></div>
+
+<h2>Get local copy</h2>
+<p>To get local copy of a repository from distributed server, </p>
+<div class="highlight"><pre><span></span><code>    git clone &lt;github-url&gt;
+</code></pre></div>
+
+<h2>Publish changes</h2>
+<p>There three phases in git.</p>
+<h3>Staging area ( buffer )</h3>
+<p><code>git add</code> command is used to add the modified or new files/folders to the staging area. Note that <code>git add</code> will not give any output</p>
+<div class="highlight"><pre><span></span><code>    git add &lt;filename&gt;
+    git add .    <span class="c1"># add current directory changes</span>
+    git add -A   <span class="c1"># add all the directories. </span>
+    git status
+</code></pre></div>
+
+<h3>Local Repo:</h3>
+<p><code>git commit</code> is used to add to local repository. While commiting the files, SHA-1 key will be generated for every commit.</p>
+<div class="highlight"><pre><span></span><code>    git commit              <span class="c1"># this will open an editor to give commit message</span>
+    git commit -m <span class="s2">&quot;reason&quot;</span>  <span class="c1"># -m used to give commit message in CLI itself</span>
+    git status      <span class="c1"># will give info about files are in statging area,local repo, remote repo</span>
+                <span class="c1"># Untracked files - which are yet to add to staging</span>
+                <span class="c1"># Changes to be committed - which are in staging area</span>
+    git log
+</code></pre></div>
+
+<h3>Remote Repo</h3>
+<p><code>git push</code> is used to push the changes to the distributed repository.</p>
+<div class="highlight"><pre><span></span><code>    git push 
+    git push -u origin master
+</code></pre></div>
+
+<p>To get remote repo details,</p>
+<div class="highlight"><pre><span></span><code>    git remote -v
+</code></pre></div>
+
+<p>To rename remote repo name,</p>
+<div class="highlight"><pre><span></span><code>    git remote rename origin destination
+    git remote -v
+</code></pre></div>
+
+<h2>Some git repo stuff</h2>
+<p>To initialize git repo locally,</p>
+<div class="highlight"><pre><span></span><code>    git init 
+</code></pre></div>
+
+<p>To add remote repo for local repo,</p>
+<div class="highlight"><pre><span></span><code>    git remote add origin &lt;url&gt;
+</code></pre></div>
+
+<p>To push the current branch and set the remote as upstream,</p>
+<div class="highlight"><pre><span></span><code>    git push --set-upstream origin master
+</code></pre></div>
+
+<p>To pull the recent content from remote repo,</p>
+<div class="highlight"><pre><span></span><code>    git pull origin master
+</code></pre></div>
+
+<h2>Advance git commands</h2>
+<p>To remove Untracked files,</p>
+<div class="highlight"><pre><span></span><code>    <span class="nv">git</span> <span class="nv">clean</span> <span class="o">-</span><span class="nv">f</span>    # <span class="nv">clean</span> <span class="nv">the</span> <span class="nv">files</span>. <span class="o">-</span><span class="nv">f</span> <span class="nv">option</span> <span class="k">for</span> <span class="nv">forceful</span>
+    <span class="nv">git</span> <span class="nv">clean</span> <span class="o">-</span><span class="nv">fd</span>   # <span class="nv">clean</span> <span class="nv">file</span> <span class="nv">and</span> <span class="nv">directory</span>. <span class="o">-</span><span class="nv">f</span> <span class="nv">option</span> <span class="k">for</span> <span class="nv">forceful</span>
+</code></pre></div>
+
+<p>To remove files which are in Staging area,</p>
+<div class="highlight"><pre><span></span><code>    git reset --hard    # changes made after the commit are discarded. It resets index and working tree.
+</code></pre></div>
+
+<p>To get previous revision,</p>
+<div class="highlight"><pre><span></span><code>    git checkout &lt;filename&gt; 
+</code></pre></div>
+
+<p>To get back past commit changes,</p>
+<div class="highlight"><pre><span></span><code>    git revert &lt;commit-id-taken-from-log&gt;
+</code></pre></div>
+
+<p>To push the changes forcefully,</p>
+<div class="highlight"><pre><span></span><code>    git push -f 
+</code></pre></div>
+
+<p>To commit recent changes in a file which are already committed</p>
+<div class="highlight"><pre><span></span><code>    git commit --amend 
+</code></pre></div>
+
+<p>If we don't want file ( which had some modifications) and keep it for sometime, we can make use of stash command. The stash content will be stored in stACKing area</p>
+<div class="highlight"><pre><span></span><code>    git stash
+    git staus
+    git stash -p    # dsiplay the chunks of changes which are stashed
+    git stash list
+    git stash apply
+</code></pre></div>
+
+<p>Other useful reset commands,</p>
+<div class="highlight"><pre><span></span><code>    <span class="nv">git</span> <span class="nv">reset</span> <span class="o">--</span><span class="nv">hard</span>    # <span class="nv">changes</span> <span class="nv">made</span> <span class="nv">after</span> <span class="nv">the</span> <span class="nv">commit</span> <span class="nv">are</span> <span class="nv">discarded</span>.
+    <span class="nv">git</span> <span class="nv">reset</span> <span class="o">--</span><span class="nv">soft</span>    # <span class="nv">changes</span> <span class="nv">made</span> <span class="nv">after</span> <span class="nv">the</span> <span class="nv">commit</span> <span class="nv">are</span> <span class="nv">moved</span> <span class="nv">to</span> <span class="s2">&quot;</span><span class="s">staged for commit</span><span class="s2">&quot;</span> <span class="nv">stage</span>.
+                # <span class="nv">you</span> <span class="nv">can</span> <span class="nv">run</span> <span class="nv">git</span> <span class="nv">commit</span> <span class="nv">command</span> <span class="nv">to</span> <span class="nv">add</span> <span class="nv">files</span> <span class="nv">back</span> <span class="nv">to</span> <span class="nv">repo</span>.
+    <span class="nv">git</span> <span class="nv">reset</span>       # <span class="nv">changes</span> <span class="nv">made</span> <span class="nv">after</span> <span class="nv">commit</span> <span class="nv">are</span> <span class="nv">moved</span> <span class="nv">to</span> <span class="s2">&quot;</span><span class="s">not yet staged for commit</span><span class="s2">&quot;</span> <span class="nv">stage</span>
+</code></pre></div>
+
+<h2>To display log</h2>
+<p><code>git</code> supports both text based and graph based log histroy,</p>
+<div class="highlight"><pre><span></span><code>    git log                     # shows the log information
+    git log --graph --oneline --decorate --all  # display bit of graph
+</code></pre></div>
+
+<p>To display the list of commits to be push to remote repo,</p>
+<div class="highlight"><pre><span></span><code>    git checrry -v
+</code></pre></div>
+
+<h2>Branching Mechanism</h2>
+<div class="highlight"><pre><span></span><code>    git branch      # display the branch in use
+    git branch -a       # display list of branches 
+    git merge       # merge two branches
+    git checkout develop    # switch the branch to develop
+    git checkout -b develop master  # create a branch&#39;develop&#39; from &#39;master&#39; branch
+</code></pre></div>
+
+<p>When you are trying to merge from develop to master branch as below
+develop -&gt; master
+source -&gt; destination</p>
+<div class="highlight"><pre><span></span><code>    git checkout master
+    git merge develop
+</code></pre></div>
+
+<p>To create an alias,</p>
+<div class="highlight"><pre><span></span><code>    git config --global alias.XZ
+</code></pre></div>
+
+<p>To generate some reports of repo changes, history and logs</p>
+<div class="highlight"><pre><span></span><code>    <span class="nv">git</span> <span class="k">for</span><span class="o">-</span><span class="nv">each</span><span class="o">-</span><span class="nv">ref</span> 
+</code></pre></div>
+
+<p>To see the contents from other branch</p>
+<div class="highlight"><pre><span></span><code>    <span class="nv">git</span> <span class="k">show</span> <span class="nv">some</span><span class="o">-</span><span class="nv">branch</span>:<span class="nv">file</span>.<span class="nv">js</span>
+</code></pre></div>
+
+<p>To list files with status,</p>
+<div class="highlight"><pre><span></span><code>    git status -s
+</code></pre></div>
+
+<p>To select part of changes</p>
+<div class="highlight"><pre><span></span><code>    git add -p
+</code></pre></div>
+
+<p>To pick some changes from a commit and apply it here</p>
+<div class="highlight"><pre><span></span><code>    git cherry-pick &lt;commitSHA&gt;
+</code></pre></div>
+
+<p>Pull and merge can be done together using rebase</p>
+<div class="highlight"><pre><span></span><code>    git rebase
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>git log options,
+    - author=&quot;...&quot;
+    - name-only
+    - oneline
+    - graph
+    - reverse
+    - after
+    - before
+</code></pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="https://twitter.com/marikannanweb">twitter</a></li>
+                            <li><a href="https://github.com/marikannan">github</a></li>
+                            <li><a href="https://www.linkedin.com/in/marikannan/">linkedin</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="https://getpelican.com/">Pelican</a>, which takes great advantage of <a href="https://www.python.org/">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="https://www.smashingmagazine.com/2009/08/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>

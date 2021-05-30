@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+        <title>"Deploy meteor app in heroku"</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+        <meta name="description" content="In this post, will give quick guide to deploy an meteor application into heroku web hosting. Assuming that you already have following..." />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">marikannan's blog</a></h1>
+                <nav><ul>
+                    <li><a href="/category/blog.html">blog</a></li>
+                    <li><a href="/pages/about.html">about</a></li>
+                    <li><a href="/pages/contact.html">contact</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/deploy-meteor-app-in-heroku.html" rel="bookmark"
+           title="Permalink to "Deploy meteor app in heroku"">"Deploy meteor app in heroku"</a></h1>
+    </header>
+
+    <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2016-05-08T15:24:10+05:30">
+                Published: Sun 08 May 2016
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->      <p>In this post, will give quick guide to deploy an meteor application into heroku web hosting.</p>
+<p>Assuming that you already have following prerequistes,</p>
+<ol>
+<li>Meteor js application is running in local system ( https://www.meteor.com )</li>
+<li>Install heroku in local system ( https://toolbelt.heroku.com )</li>
+<li>Heroku account ( verified ) in www.heroku.com</li>
+<li>git installed in local system</li>
+</ol>
+<p>Here is the list of steps to deploy meteor application in heroku.</p>
+<ul>
+<li>Go to meteor application's root directory</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span> sample-meteor-app
+</code></pre></div>
+
+<ul>
+<li>Initialize git for the appln directory.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>git init
+git add .
+git commit -am <span class="s2">&quot;Initial Commit&quot;</span>
+</code></pre></div>
+
+<ul>
+<li>Creating a sample heroku application.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>heroku create sample-app
+</code></pre></div>
+
+<ul>
+<li>Setting up the build packs which tells heroku how to setup and build the heroku container.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>heroku buildpacks:set https://github.com/AdmitHub/meteor-buildpack-horse.git
+</code></pre></div>
+
+<ul>
+<li>Installing mongodb addons to support for our meteor application.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>heroku addons:create mongolab
+</code></pre></div>
+
+<ul>
+<li>Setting the application url</li>
+</ul>
+<div class="highlight"><pre><span></span><code>heroku config:set <span class="nv">ROOT_URL</span><span class="o">=</span>https://sample-app.herokuapp.com
+</code></pre></div>
+
+<ul>
+<li>Deploying the heroku application in heroku repository.</li>
+</ul>
+<div class="highlight"><pre><span></span><code>git push heroku master
+</code></pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="https://twitter.com/marikannanweb">twitter</a></li>
+                            <li><a href="https://github.com/marikannan">github</a></li>
+                            <li><a href="https://www.linkedin.com/in/marikannan/">linkedin</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="https://getpelican.com/">Pelican</a>, which takes great advantage of <a href="https://www.python.org/">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="https://www.smashingmagazine.com/2009/08/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+        <title>"Octopress blog site setup"</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+        <meta name="description" content="I am using octopress quite some time for my technical blog and the octopress framework is interesting but sometimes I felt difficult to setup..." />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">marikannan's blog</a></h1>
+                <nav><ul>
+                    <li><a href="/category/blog.html">blog</a></li>
+                    <li><a href="/pages/about.html">about</a></li>
+                    <li><a href="/pages/contact.html">contact</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/octopress-blog-site-setup.html" rel="bookmark"
+           title="Permalink to "Octopress blog site setup"">"Octopress blog site setup"</a></h1>
+    </header>
+
+    <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2015-12-12T11:53:18+05:30">
+                Published: Sat 12 December 2015
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->      <p>I am using octopress quite some time for my technical blog and the octopress framework is interesting but sometimes I felt difficult to setup while working in different machines.Because I need to setup the entire source code to blog a single post. So just thought to document the steps.</p>
+<!-- more -->
+<h2>Setup for fresh site</h2>
+<div class="highlight"><pre><span></span><code><span class="nv">git</span> <span class="nv">clone</span> <span class="nv">git</span>:<span class="o">//</span><span class="nv">github</span>.<span class="nv">com</span><span class="o">/</span><span class="nv">imathis</span><span class="o">/</span><span class="nv">octopress</span>.<span class="nv">git</span> <span class="nv">octopress</span>
+<span class="nv">cd</span> <span class="nv">octopress</span>
+# <span class="nv">setup</span> <span class="k">for</span> <span class="nv">installing</span> <span class="nv">the</span> <span class="nv">dependencies</span>
+<span class="nv">gem</span> <span class="nv">install</span> <span class="nv">bundler</span>
+<span class="nv">rbenv</span> <span class="nv">rehash</span>    
+<span class="nv">bundle</span> <span class="nv">install</span>
+# <span class="nv">Install</span> <span class="nv">the</span> <span class="nv">default</span> <span class="nv">theme</span>
+<span class="nv">rake</span> <span class="nv">install</span>
+</code></pre></div>
+
+<p>Now you are set to for happy blogging. Of course first you are gonna modify _config.yml file then you can start creating post, page as below</p>
+<div class="highlight"><pre><span></span><code><span class="n">rake</span><span class="w"> </span><span class="n">new_post</span><span class="o">[</span><span class="n">post_title</span><span class="o">]</span><span class="w"></span>
+<span class="n">rake</span><span class="w"> </span><span class="n">new_page</span><span class="o">[</span><span class="n">page_title</span><span class="o">]</span><span class="w"></span>
+</code></pre></div>
+
+<h2>Setup for existing site</h2>
+<div class="highlight"><pre><span></span><code>git clone https://github.com/&lt;username&gt;/&lt;username&gt;.github.io.git
+cd &lt;username&gt;.github.io.git
+git checkout source
+mkdir _deploy
+cd _deploy
+git init
+git remote add origin https://github.com/&lt;username&gt;/&lt;username&gt;.github.io.git
+git pull origin master
+cd ..
+</code></pre></div>
+
+<p>Now everything is set to blog as usual.</p>
+<h2>Deploy in Githup Pages</h2>
+<p>There are two tasks in this. One is deploying your generated blog site in 'master' branch and second is backup the site source in git 'source' branch.</p>
+<h3>Deploy the blog site:</h3>
+<div class="highlight"><pre><span></span><code>rake setup_github_pages
+rake generate
+#rake preview # to verify your site in local machines
+rake deploy
+</code></pre></div>
+
+<h3>Backup the source :</h3>
+<div class="highlight"><pre><span></span><code>git add .
+git commit -m &#39;commit details&#39;
+git push origin source
+</code></pre></div>
+
+<p>This needs to be done everytime you deploy your site which helps you to quickly start blogging from any machine if have ineternet.</p>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="https://twitter.com/marikannanweb">twitter</a></li>
+                            <li><a href="https://github.com/marikannan">github</a></li>
+                            <li><a href="https://www.linkedin.com/in/marikannan/">linkedin</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="https://getpelican.com/">Pelican</a>, which takes great advantage of <a href="https://www.python.org/">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="https://www.smashingmagazine.com/2009/08/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>

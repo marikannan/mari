@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+        <title>"Similarity between two datasets"</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+        <meta name="description" content="I am writing this post to demonstrate how to find the similarity between two datasets using C programming. Also to see how the efficiency of the..." />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">marikannan's blog</a></h1>
+                <nav><ul>
+                    <li><a href="/category/blog.html">blog</a></li>
+                    <li><a href="/pages/about.html">about</a></li>
+                    <li><a href="/pages/contact.html">contact</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+<section id="content" class="body">
+  <article>
+    <header>
+      <h1 class="entry-title">
+        <a href="/similarity-between-two-datasets.html" rel="bookmark"
+           title="Permalink to "Similarity between two datasets"">"Similarity between two datasets"</a></h1>
+    </header>
+
+    <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2016-04-07T06:46:58+05:30">
+                Published: Thu 07 April 2016
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->      <p>I am writing this post to demonstrate how to find the similarity between two datasets using C programming. Also to see how the efficiency of the application is increased when it is handled in algorithmic approach.</p>
+<h2>Scenario</h2>
+<p>Consider two datasets A and B each having ID, first name and last name. First dataset has 100 K rows and second has 10 million rows. Each of 100 K should scan through 10 million rows and find possible matches. Output dataset should provide a clear idea as how 100 K records in Dataset A matches with one or many records in Dataset B.</p>
+<h2>Motivation</h2>
+<p>Based on the details of the datasets , it seems the first dataset is relatively smaller than the other in the ratio of 1:100 ( ie 100K vs 10 million records ). So I am considering the design pattern of loading the smaller dataset into memory and read the second dataset record one by one and find the match and perform the join.</p>
+<h2>Algorithm</h2>
+<div class="highlight"><pre><span></span><code>// Algorithm:
+//
+//      load dataset1<span class="p">;</span>
+//      sort dataset1<span class="p">;</span>                   // using qsort algorithm
+//
+//      loop
+//          <span class="nb">read</span> record from dataset2
+//          <span class="k">if</span> record match <span class="k">in</span> dataset1 //using binary search algorithm
+//          <span class="k">then</span>
+//              add record to matchrec <span class="k">in</span> dataset1
+//          endif
+//      end loop
+//
+//      display matchrecords
+//
+</code></pre></div>
+
+<p>The efficiency in sorting  ( the first dataset  dataset1) is accomplished using  "qsort" algorithm. The main core logic of this program is how quickly , it can find the match in the first dataset. For this, I made use of “binary search algorithm” . Here is the complexity details of the algorithms used.</p>
+<blockquote>
+<p>Efficiency of sorting    : qsort    - O(n log n)
+Efficiency of searching  : bsearch  - O(log n)</p>
+</blockquote>
+<h2>Input/Output Format</h2>
+<p>The dataset record contains identifier, firstname &amp; lastname seperated by “\t” tab space as below,</p>
+<h3>Data set Input Format</h3>
+<p>Both dataset1(smalldataset.txt) &amp; dataset2 (largedataset.txt)</p>
+<div class="highlight"><pre><span></span><code>/Users/user/wkarea//data $ head smalldataset.txt
+<span class="m">12001</span>    Aaron2001   Aaberg2001
+<span class="m">22001</span>    Aaron2001   Aaby2001
+<span class="m">32001</span>    Abbey2001   Aadland2001
+<span class="m">42001</span>    Abbie2001   Aagaard2001
+<span class="m">52001</span>    Abby2001    Aakre2001
+<span class="m">62001</span>    Abdul2001   Aaland2001
+</code></pre></div>
+
+<h3>Output Format:</h3>
+<div class="highlight"><pre><span></span><code><span class="o">{</span> dataset1 record1 <span class="o">}</span> <span class="o">=</span>&gt; <span class="o">{</span>
+                                          <span class="o">{</span>dataset2 match record1<span class="o">}</span>,
+                                          <span class="o">{</span>dataset2 match record2<span class="o">}</span>,
+                                           .....
+                                          <span class="o">{</span>dataset2 match recordN<span class="o">}</span>
+                                      <span class="o">}</span>
+<span class="o">{</span> dataset1 record2 <span class="o">}</span> <span class="o">=</span>&gt; <span class="o">{</span>
+                                          <span class="o">{</span>dataset2 match record1<span class="o">}</span>,
+                                          <span class="o">{</span>dataset2 match record2<span class="o">}</span>,
+                                           .....
+                                          <span class="o">{</span>dataset2 match recordN<span class="o">}</span>
+                                      <span class="o">}</span>
+</code></pre></div>
+
+<h2>Generating larger dataset</h2>
+<p>For testing the performance/efficiency of the implementation, I prepared the  datasets with 100K records in dataset1 and 10 million records in dataset2 using the below script which take small dataset and add suffix 0...N so that the names will be unique except few cases where I am gonna insert match records to check the output of the application.</p>
+<div class="highlight"><pre><span></span><code>~/wkarea//data $ cat gen_bulkdata.sh
+<span class="c1">#!/bin/bash</span>
+<span class="nv">cnt</span><span class="o">=</span><span class="m">0</span>
+&gt;largedataset.txt
+<span class="k">while</span> <span class="o">[</span> <span class="nv">$cnt</span> -le <span class="m">2000</span> <span class="o">]</span>
+<span class="k">do</span>
+  cat dataset.final <span class="p">|</span> awk  <span class="se">\</span>
+       <span class="s1">&#39;{print $1&quot;&#39;</span><span class="s2">&quot;</span><span class="nv">$cnt</span><span class="s2">&quot;</span><span class="s1">&#39;&quot;,&quot;\t&quot;,$2&quot;&#39;</span><span class="s2">&quot;</span><span class="nv">$cnt</span><span class="s2">&quot;</span><span class="s1">&#39;&quot;,&quot;\t&quot;,$3&quot;&#39;</span><span class="s2">&quot;</span><span class="nv">$cnt</span><span class="s2">&quot;</span><span class="s1">&#39;&quot;}&#39;</span>  &gt;&gt; largedataset.txt
+  <span class="nb">echo</span> <span class="s2">&quot;Counting </span><span class="nv">$cnt</span><span class="s2">&quot;</span>
+  <span class="nb">let</span> <span class="nv">cnt</span><span class="o">=</span>cnt+1
+<span class="k">done</span>
+</code></pre></div>
+
+<h2>Execution &amp; Testing</h2>
+<p>For performance testing I mocked dataset in such a way that the records are unique in dataset1 ( 1,00,000 records ) and few match records in dataset2 ( which contains 10 million records in total)</p>
+<div class="highlight"><pre><span></span><code>~/wkarea//data $ ls -rlth
+total <span class="m">665440</span>
+-rw-r--r--  <span class="m">1</span> user  staff   207B Mar <span class="m">21</span> <span class="m">02</span>:33 gen_bulkdata.sh
+-rw-r--r--  <span class="m">1</span> user  staff   322M Mar <span class="m">21</span> <span class="m">02</span>:53 largedataset.txt
+-rw-r--r--  <span class="m">1</span> user  staff   <span class="m">3</span>.4M Mar <span class="m">21</span> <span class="m">02</span>:54 smalldataset.txt
+
+~/wkarea//data $ wc -l smalldataset.txt largedataset.txt
+  <span class="m">100000</span> smalldataset.txt
+ <span class="m">10000000</span> largedataset.txt
+ <span class="m">10100000</span> total
+</code></pre></div>
+
+<h2>Output Matched Records</h2>
+<p>The entire datasets datset1 &amp; dataset2 ( 100K vs 10 million records ) are scanned and completed in 2 mins 8 secs.</p>
+<div class="highlight"><pre><span></span><code>/Users/user/wkarea//stats $ cat output_withduration
+<span class="o">{</span> <span class="m">49862200</span>, Sunil, Kumar <span class="o">}</span> <span class="o">=</span>&gt;  <span class="o">{</span>
+    <span class="o">{</span> <span class="m">234563</span>, Sunil, Kumar <span class="o">}</span>,
+    <span class="o">{</span> <span class="m">986966</span>, Sunil, Kumar <span class="o">}</span>,
+    <span class="o">{</span> <span class="m">49962002</span>, Sunil, Kumar <span class="o">}</span>,
+    <span class="o">}</span>
+<span class="o">{</span> <span class="m">49872200</span>, RameshKumar, Bhatia <span class="o">}</span> <span class="o">=</span>&gt;  <span class="o">{</span>
+    <span class="o">{</span> <span class="m">49902203</span>, RameshKumar, Bhatia <span class="o">}</span>,
+    <span class="o">{</span> <span class="m">21234543</span>, RameshKumar, Bhatia <span class="o">}</span>,
+    <span class="o">}</span>
+      <span class="m">128</span>.55 real       <span class="m">127</span>.91 user         <span class="m">0</span>.52 sys
+</code></pre></div>
+
+<p>The application is run in the background,</p>
+<div class="highlight"><pre><span></span><code>$ nohup <span class="nb">time</span> ./similar &gt; stats/output_withduration <span class="p">&amp;</span>
+<span class="o">[</span><span class="m">2</span><span class="o">]</span> <span class="m">2227</span>
+
+/Users/user/wkarea//stats $ <span class="nb">jobs</span>
+<span class="o">[</span><span class="m">2</span><span class="o">]</span> +  Running                 nohup <span class="nb">time</span> ./similar &gt; stats/output_withduration <span class="p">&amp;</span>
+<span class="o">[</span><span class="m">1</span><span class="o">]</span> -  Running                 nohup top -l <span class="m">1440</span> -s <span class="m">5</span> -pid <span class="m">2313</span> &gt; top_statistics.txt <span class="p">&amp;</span>
+</code></pre></div>
+
+<p>CPU Usage: ( around 30% spikes in CPU utilization )</p>
+<h2>Source Code:</h2>
+<p>The source code is organized in such a way that it can be used as an API in any other application copying similar.c and similar.h.</p>
+<div class="highlight"><pre><span></span><code>/Users/user/wkarea/ $ tree
+.
+├── Makefile
+├── data
+│   ├── largedataset.txt
+│   └── smalldataset.txt
+├── inc
+│   └── similar.h
+├── similar
+└── src
+    ├── main.c
+    └── similar.c
+
+<span class="m">3</span> directories, <span class="m">7</span> files
+/Users/user/wkarea/ $
+</code></pre></div>
+
+<h3>API functions:</h3>
+<ul>
+<li>load_dataset1   - Load the dataset 1 into memory.
+Usage: void load_dataset1(char *filename)</li>
+<li>join_datasets    - Join dataset1 with dataset2.
+Usage: void join_datasets (char *filename);</li>
+<li>print_similar    - Print the similar records in datasets against dataset1.
+Usage: void print_similar(void)</li>
+</ul>
+<p>src/main.c</p>
+<div class="highlight"><pre><span></span><code><span class="c1">//</span>
+<span class="c1">//  main.c</span>
+<span class="c1">//  </span>
+<span class="c1">//</span>
+<span class="c1">//  Created by Marikannan Muthiah on 20/03/16.</span>
+<span class="c1">//</span>
+<span class="c1">//</span>
+
+<span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;similar.h&quot;</span><span class="cp"></span>
+
+<span class="k">struct</span>          <span class="nc">DATASET</span> <span class="n">DS1</span><span class="p">[</span><span class="n">MAX_REC</span><span class="p">];</span>
+<span class="kt">long</span> <span class="kt">long</span>       <span class="n">DS1_TOTALREC</span><span class="p">;</span>
+<span class="k">struct</span>          <span class="nc">MATCHREC</span>  <span class="n">DS2REC</span><span class="p">;</span>
+<span class="kt">char</span>            <span class="n">recbuf</span><span class="p">[</span><span class="n">RECORDSZ</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+<span class="kt">char</span>            <span class="n">sep</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+<span class="kt">int</span>             <span class="n">jsonfmt</span><span class="p">;</span>
+
+<span class="c1">// Algorithm:</span>
+<span class="c1">//</span>
+<span class="c1">//      load dataset1;</span>
+<span class="c1">//      sort dataset1;                      // using qsort</span>
+<span class="c1">//</span>
+<span class="c1">//      loop</span>
+<span class="c1">//          read record from dataset2</span>
+<span class="c1">//          if record match in dataset1     // match is found based on binary search</span>
+<span class="c1">//          then</span>
+<span class="c1">//              add record to matchrec in dataset1</span>
+<span class="c1">//          endif</span>
+<span class="c1">//      end loop</span>
+<span class="c1">//</span>
+<span class="c1">//      display matchrecords</span>
+<span class="c1">//</span>
+<span class="c1">// Algorithms Used : For better efficiency sorting is performed by &quot;qsort&quot; algorithm and searching the match in dataset1 is accoplished using &quot;binary search&quot;.</span>
+<span class="c1">// Effiency of sorting   : qsort    - O(n log n)</span>
+<span class="c1">// Effiency of searching : bsearch  - O(log n)</span>
+
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">char</span> <span class="n">ds1_fname</span><span class="p">[</span><span class="n">FILESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span><span class="n">ds2_fname</span><span class="p">[</span><span class="n">FILESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>   <span class="cm">/* filename of dataset1 &amp; 2 */</span>
+    <span class="kt">int</span>  <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">idx2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">sep</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="sc">&#39;,&#39;</span><span class="p">;</span>                                     <span class="cm">/* defaule seperator used for display */</span>
+    <span class="n">jsonfmt</span> <span class="o">=</span> <span class="n">JSONFMT</span><span class="p">;</span>
+
+    <span class="n">sprintf</span> <span class="p">(</span> <span class="n">ds1_fname</span><span class="p">,</span> <span class="s">&quot;./data/smalldataset.txt&quot;</span><span class="p">);</span>
+    <span class="n">sprintf</span> <span class="p">(</span> <span class="n">ds2_fname</span><span class="p">,</span> <span class="s">&quot;./data/largedataset.txt&quot;</span><span class="p">);</span>
+
+
+    <span class="cm">/* Load the small dataset1 into memory and will be used for join later against dataset 2 */</span>
+    <span class="n">load_dataset1</span><span class="p">(</span><span class="n">ds1_fname</span><span class="p">);</span>
+
+    <span class="cm">/* sort the dataset 1 */</span>
+    <span class="n">qsort</span><span class="p">(</span><span class="n">DS1</span><span class="p">,</span><span class="n">DS1_TOTALREC</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="nc">DATASET</span><span class="p">),</span><span class="n">compare_ds1compkey</span><span class="p">);</span>
+
+    <span class="cm">/* find the match for each record in dataset1 in dataset2 */</span>
+    <span class="n">join_datasets</span><span class="p">(</span><span class="n">ds2_fname</span><span class="p">);</span>
+
+    <span class="cm">/* diplay the join results */</span>
+    <span class="n">print_similar</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>src/similar.c</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span> <span class="cpf">&quot;similar.h&quot;</span><span class="cp"></span>
+
+
+<span class="cm">/* Function : gen_compkey - generate compositekey */</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">gen_compkey</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">compkey</span><span class="p">,</span> <span class="k">const</span> <span class="k">struct</span> <span class="nc">DATASET</span> <span class="o">*</span><span class="n">ds1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">compkey</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">);</span>
+    <span class="n">snprintf</span><span class="p">(</span><span class="n">compkey</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">,</span><span class="s">&quot;%s|%s&quot;</span><span class="p">,</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">firstname</span><span class="p">,</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">lastname</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Function : init_fields - initialize the fileds  */</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">init_fields</span><span class="p">(</span><span class="k">struct</span> <span class="nc">DATASET</span> <span class="o">*</span><span class="n">ds1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="n">ds1</span><span class="o">-&gt;</span><span class="n">id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">firstname</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">NAMESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">lastname</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">NAMESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">compkey</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">ds1</span><span class="o">-&gt;</span><span class="n">matchcnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">MAX_MATCHREC</span><span class="p">;</span> <span class="n">idx</span><span class="o">++</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="n">ds1</span><span class="o">-&gt;</span><span class="n">matchrec</span><span class="p">[</span><span class="n">idx</span><span class="p">].</span><span class="n">id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="n">memset</span><span class="p">(</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">matchrec</span><span class="p">[</span><span class="n">idx</span><span class="p">].</span><span class="n">firstname</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">NAMESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">memset</span><span class="p">(</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">matchrec</span><span class="p">[</span><span class="n">idx</span><span class="p">].</span><span class="n">lastname</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">NAMESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">memset</span><span class="p">(</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">matchrec</span><span class="p">[</span><span class="n">idx</span><span class="p">].</span><span class="n">compkey</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/* Function : get_fields - seperate the fields from the tab &#39;\t&#39; seperated record */</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">get_fields</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">recbuf</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">DATASET</span> <span class="o">*</span><span class="n">ds1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">sscanf</span><span class="p">(</span><span class="n">recbuf</span><span class="p">,</span><span class="s">&quot;%d%s%s&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">id</span><span class="p">,</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">firstname</span><span class="p">,</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">lastname</span><span class="p">);</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">compkey</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">);</span>
+    <span class="n">snprintf</span><span class="p">(</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">compkey</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">,</span><span class="s">&quot;%s|%s&quot;</span><span class="p">,</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">firstname</span><span class="p">,</span><span class="n">ds1</span><span class="o">-&gt;</span><span class="n">lastname</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Function : get_fields - seperate the fields from the tab &#39;\t&#39; seperated record */</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">get_fields2</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">recbuf</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">MATCHREC</span> <span class="o">*</span><span class="n">matchrec</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">id</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">firstname</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">NAMESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">lastname</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">NAMESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">sscanf</span><span class="p">(</span><span class="n">recbuf</span><span class="p">,</span><span class="s">&quot;%d%s%s&quot;</span><span class="p">,</span><span class="o">&amp;</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">id</span><span class="p">,</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">firstname</span><span class="p">,</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">lastname</span><span class="p">);</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">compkey</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">);</span>
+    <span class="n">snprintf</span><span class="p">(</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">compkey</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">,</span><span class="s">&quot;%s|%s&quot;</span><span class="p">,</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">firstname</span><span class="p">,</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">lastname</span><span class="p">);</span>
+
+<span class="p">}</span>
+
+<span class="cm">/* Function : print_dsrec - to print a data set record */</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">print_dsrec</span><span class="p">(</span><span class="k">const</span> <span class="k">struct</span> <span class="nc">DATASET</span> <span class="n">ds</span><span class="p">,</span><span class="kt">char</span> <span class="n">sep</span><span class="p">[])</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">jsonfmt</span> <span class="o">==</span> <span class="n">JSONFMT</span> <span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;{ %d, %s, %s } =&gt; &quot;</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">firstname</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">lastname</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;%d%s%s%s%s </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="n">sep</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">firstname</span><span class="p">,</span><span class="n">sep</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">lastname</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Function : print_matchrec - to print a data set 2 record preceding with single tab */</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">print_matchrec</span><span class="p">(</span><span class="k">const</span> <span class="k">struct</span> <span class="nc">MATCHREC</span> <span class="n">matchrec</span> <span class="p">,</span><span class="kt">char</span> <span class="n">sep</span><span class="p">[])</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">jsonfmt</span> <span class="o">==</span> <span class="n">JSONFMT</span> <span class="p">)</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">{ %d, %s, %s }&quot;</span><span class="p">,</span><span class="n">matchrec</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="n">matchrec</span><span class="p">.</span><span class="n">firstname</span><span class="p">,</span><span class="n">matchrec</span><span class="p">.</span><span class="n">lastname</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">%d%s%s%s%s </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">matchrec</span><span class="p">.</span><span class="n">id</span><span class="p">,</span><span class="n">sep</span><span class="p">,</span><span class="n">matchrec</span><span class="p">.</span><span class="n">firstname</span><span class="p">,</span><span class="n">sep</span><span class="p">,</span><span class="n">matchrec</span><span class="p">.</span><span class="n">lastname</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Function : print_ds - to print the entire data set */</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">print_ds</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="p">(</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">DS1_TOTALREC</span><span class="p">;</span> <span class="n">idx</span><span class="o">++</span> <span class="p">)</span>
+        <span class="n">print_dsrec</span><span class="p">(</span><span class="n">DS1</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span><span class="n">sep</span><span class="p">);</span>
+
+    <span class="n">printf</span><span class="p">(</span><span class="s">&quot;Total number of records : %lld</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">DS1_TOTALREC</span><span class="p">);</span>
+
+<span class="p">}</span>
+
+<span class="cm">/* Function : add_matchrec - To add match record */</span>
+<span class="k">static</span> <span class="kt">void</span> <span class="nf">add_matchrec</span> <span class="p">(</span><span class="k">struct</span> <span class="nc">DATASET</span> <span class="o">*</span><span class="n">ds1rec</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">MATCHREC</span>  <span class="o">*</span><span class="n">matchrec</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">ds1rec</span><span class="o">-&gt;</span><span class="n">matchcnt</span><span class="o">+</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">MAX_MATCHREC</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="n">ds1rec</span><span class="o">-&gt;</span><span class="n">matchrec</span><span class="p">[</span><span class="n">ds1rec</span><span class="o">-&gt;</span><span class="n">matchcnt</span><span class="p">].</span><span class="n">id</span> <span class="o">=</span> <span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">id</span><span class="p">;</span>
+        <span class="n">memcpy</span><span class="p">(</span><span class="n">ds1rec</span><span class="o">-&gt;</span><span class="n">matchrec</span><span class="p">[</span><span class="n">ds1rec</span><span class="o">-&gt;</span><span class="n">matchcnt</span><span class="p">].</span><span class="n">firstname</span><span class="p">,</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">firstname</span><span class="p">,</span><span class="n">NAMESZ</span><span class="p">);</span>
+        <span class="n">memcpy</span><span class="p">(</span><span class="n">ds1rec</span><span class="o">-&gt;</span><span class="n">matchrec</span><span class="p">[</span><span class="n">ds1rec</span><span class="o">-&gt;</span><span class="n">matchcnt</span><span class="p">].</span><span class="n">lastname</span><span class="p">,</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">lastname</span><span class="p">,</span><span class="n">NAMESZ</span><span class="p">);</span>
+        <span class="n">memcpy</span><span class="p">(</span><span class="n">ds1rec</span><span class="o">-&gt;</span><span class="n">matchrec</span><span class="p">[</span><span class="n">ds1rec</span><span class="o">-&gt;</span><span class="n">matchcnt</span><span class="p">].</span><span class="n">compkey</span><span class="p">,</span><span class="n">matchrec</span><span class="o">-&gt;</span><span class="n">compkey</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">);</span>
+        <span class="n">ds1rec</span><span class="o">-&gt;</span><span class="n">matchcnt</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/* Function : compare_ds1compkey - comparator function for qsort algorithm */</span>
+<span class="kt">int</span> <span class="nf">compare_ds1compkey</span> <span class="p">(</span><span class="k">struct</span> <span class="nc">DATASET</span> <span class="o">*</span><span class="n">ds1rec1</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">DATASET</span> <span class="o">*</span><span class="n">ds1rec2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="n">compkey1</span><span class="p">[</span><span class="n">COMPKEYSZ</span><span class="p">];</span>
+    <span class="kt">char</span> <span class="n">compkey2</span><span class="p">[</span><span class="n">COMPKEYSZ</span><span class="p">];</span>
+
+    <span class="n">memset</span><span class="p">(</span><span class="n">compkey1</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">);</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">compkey2</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">);</span>
+
+    <span class="n">gen_compkey</span><span class="p">(</span><span class="n">compkey1</span><span class="p">,</span><span class="n">ds1rec1</span><span class="p">);</span>
+    <span class="n">gen_compkey</span><span class="p">(</span><span class="n">compkey2</span><span class="p">,</span><span class="n">ds1rec2</span><span class="p">);</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">memcmp</span><span class="p">(</span><span class="n">compkey1</span><span class="p">,</span><span class="n">compkey2</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="cm">/* Function : bsearch_compare - comparator function for binary search algorithm  */</span>
+<span class="kt">int</span> <span class="nf">bsearch_compare</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">recbuf</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">DATASET</span> <span class="o">*</span><span class="n">ds1rec</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="n">compkey1</span><span class="p">[</span><span class="n">COMPKEYSZ</span><span class="p">];</span>
+    <span class="kt">char</span> <span class="n">compkey2</span><span class="p">[</span><span class="n">COMPKEYSZ</span><span class="p">];</span>
+    <span class="k">struct</span> <span class="nc">MATCHREC</span> <span class="n">matchrec</span> <span class="p">;</span>
+    <span class="kt">int</span> <span class="n">rc</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="n">memset</span><span class="p">(</span><span class="n">compkey2</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">);</span>
+    <span class="n">get_fields2</span><span class="p">(</span><span class="n">recbuf</span><span class="p">,</span><span class="o">&amp;</span><span class="n">matchrec</span><span class="p">);</span>
+    <span class="n">gen_compkey</span><span class="p">(</span><span class="n">compkey2</span><span class="p">,</span><span class="n">ds1rec</span><span class="p">);</span>
+
+    <span class="n">rc</span> <span class="o">=</span> <span class="n">memcmp</span><span class="p">(</span><span class="n">matchrec</span><span class="p">.</span><span class="n">compkey</span><span class="p">,</span><span class="n">compkey2</span><span class="p">,</span><span class="n">COMPKEYSZ</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="mi">0</span> <span class="o">==</span> <span class="n">rc</span> <span class="p">)</span>
+        <span class="n">add_matchrec</span><span class="p">(</span><span class="n">ds1rec</span><span class="p">,</span><span class="o">&amp;</span><span class="n">matchrec</span><span class="p">);</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">rc</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Function: load_dataset1 - Load small dataset which can handle upto 1,00,000 records */</span>
+<span class="kt">void</span> <span class="nf">load_dataset1</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">ds1_fname</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="kt">FILE</span> <span class="o">*</span><span class="n">fpds1</span><span class="p">;</span>
+    <span class="kt">int</span>  <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="n">fpds1</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">ds1_fname</span><span class="p">,</span> <span class="s">&quot;r&quot;</span> <span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">fpds1</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span> <span class="p">(</span><span class="s">&quot;Error : Not able to open data set 1 : %s. </span><span class="se">\n</span><span class="s">Exitting ...</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ds1_fname</span><span class="p">);</span>
+        <span class="n">exit</span> <span class="p">(</span><span class="mi">-1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">recbuf</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">RECORDSZ</span><span class="p">);</span>               <span class="cm">/* clear record buffer */</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">recbuf</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="mi">256</span><span class="p">);</span>               <span class="cm">/* clear record buffer */</span>
+
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span> <span class="n">fgets</span> <span class="p">(</span><span class="n">recbuf</span><span class="p">,</span><span class="mi">256</span><span class="p">,</span><span class="n">fpds1</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">NULL</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="n">init_fields</span><span class="p">(</span><span class="o">&amp;</span><span class="n">DS1</span><span class="p">[</span><span class="n">idx</span><span class="p">]);</span>
+        <span class="n">get_fields</span><span class="p">(</span><span class="n">recbuf</span><span class="p">,</span><span class="o">&amp;</span><span class="n">DS1</span><span class="p">[</span><span class="n">idx</span><span class="p">]);</span>
+        <span class="c1">// print_dsrec(DS1[idx],&quot;|&quot;);       /* &#39;|&#39; pipe is a seperator while displaying */</span>
+        <span class="n">idx</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">DS1_TOTALREC</span> <span class="o">=</span> <span class="n">idx</span> <span class="p">;</span>    <span class="cm">/* total number of records loaded into memory. */</span>
+<span class="p">}</span>
+
+<span class="cm">/* Function : join_datasets - Function which joins two datasets dataset1 &amp; dataset2 */</span>
+<span class="kt">void</span> <span class="nf">join_datasets</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">ds2_fname</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span>  <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">FILE</span> <span class="o">*</span><span class="n">fpds2</span><span class="p">;</span>                <span class="cm">/* file pointer to data set1 &amp; data set 2 */</span>
+
+    <span class="n">fpds2</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">ds2_fname</span><span class="p">,</span> <span class="s">&quot;r&quot;</span> <span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">fpds2</span> <span class="o">==</span> <span class="nb">NULL</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span> <span class="p">(</span><span class="s">&quot;Error : Not able to open data set 2 : %s. </span><span class="se">\n</span><span class="s">Exitting ...</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="n">ds2_fname</span><span class="p">);</span>
+        <span class="n">exit</span> <span class="p">(</span><span class="mi">-1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">memset</span><span class="p">(</span><span class="n">recbuf</span><span class="p">,</span><span class="mh">0x00</span><span class="p">,</span><span class="n">RECORDSZ</span><span class="p">);</span>               <span class="cm">/* clear record buffer */</span>
+
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span> <span class="n">fgets</span> <span class="p">(</span><span class="n">recbuf</span><span class="p">,</span><span class="mi">256</span><span class="p">,</span><span class="n">fpds2</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">NULL</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="n">get_fields2</span><span class="p">(</span><span class="n">recbuf</span><span class="p">,</span><span class="o">&amp;</span><span class="n">DS2REC</span><span class="p">);</span>
+        <span class="n">bsearch</span><span class="p">(</span><span class="n">recbuf</span><span class="p">,</span><span class="n">DS1</span><span class="p">,</span><span class="n">DS1_TOTALREC</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="nc">DATASET</span><span class="p">),</span><span class="o">&amp;</span><span class="n">bsearch_compare</span><span class="p">);</span>
+        <span class="n">idx</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="cm">/* Function : print_similar - To print similar records b/w dataset1 and dataset 2 */</span>
+<span class="kt">void</span> <span class="nf">print_similar</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span>  <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">idx2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="cm">/* diplay the join results */</span>
+    <span class="n">idx</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span> <span class="n">idx</span> <span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">DS1_TOTALREC</span> <span class="p">;</span> <span class="n">idx</span><span class="o">++</span> <span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">DS1</span><span class="p">[</span><span class="n">idx</span><span class="p">].</span><span class="n">matchcnt</span> <span class="p">)</span> <span class="p">{</span>
+            <span class="n">print_dsrec</span><span class="p">(</span><span class="n">DS1</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span><span class="n">sep</span><span class="p">);</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="n">jsonfmt</span> <span class="o">==</span> <span class="n">JSONFMT</span> <span class="p">)</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&quot; { </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+
+            <span class="k">for</span> <span class="p">(</span> <span class="n">idx2</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">idx2</span> <span class="o">&lt;</span> <span class="n">MAX_MATCHREC</span> <span class="o">&amp;&amp;</span> <span class="n">DS1</span><span class="p">[</span><span class="n">idx</span><span class="p">].</span><span class="n">matchrec</span><span class="p">[</span><span class="n">idx2</span><span class="p">].</span><span class="n">id</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">idx2</span><span class="o">++</span> <span class="p">)</span> <span class="p">{</span>
+                <span class="n">print_matchrec</span><span class="p">(</span><span class="n">DS1</span><span class="p">[</span><span class="n">idx</span><span class="p">].</span><span class="n">matchrec</span><span class="p">[</span><span class="n">idx2</span><span class="p">],</span><span class="n">sep</span><span class="p">);</span>
+                <span class="n">jsonfmt</span> <span class="o">==</span> <span class="n">JSONFMT</span> <span class="o">?</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;,</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span> <span class="o">:</span> <span class="n">printf</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span> <span class="p">;</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span> <span class="n">jsonfmt</span> <span class="o">==</span> <span class="n">JSONFMT</span> <span class="p">)</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">&quot;    } </span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>inc/similar.h</p>
+<div class="highlight"><pre><span></span><code><span class="cp">#define NAMESZ        20            </span><span class="cm">/* first , last name size */</span><span class="cp"></span>
+<span class="cp">#define FILESZ        256           </span><span class="cm">/* file name size */</span><span class="cp"></span>
+<span class="cp">#define COMPKEYSZ     40            </span><span class="cm">/* composite key size first name &amp; last name */</span><span class="cp"></span>
+<span class="cp">#define RECORDSZ      256           </span><span class="cm">/* dataset record size */</span><span class="cp"></span>
+<span class="cp">#define MAX_REC       100000        </span><span class="cm">/* maximum number of records in dataset 1 */</span><span class="cp"></span>
+<span class="cp">#define MAX_MATCHREC      5             </span><span class="cm">/* maximum number of match records */</span><span class="cp"></span>
+
+
+<span class="k">struct</span> <span class="nc">MATCHREC</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">id</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">firstname</span><span class="p">[</span><span class="n">NAMESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+    <span class="kt">char</span> <span class="n">lastname</span><span class="p">[</span><span class="n">NAMESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+    <span class="kt">char</span> <span class="n">compkey</span><span class="p">[</span><span class="n">COMPKEYSZ</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="k">struct</span> <span class="nc">DATASET</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">id</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">firstname</span><span class="p">[</span><span class="n">NAMESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+    <span class="kt">char</span> <span class="n">lastname</span><span class="p">[</span><span class="n">NAMESZ</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+    <span class="kt">char</span> <span class="n">compkey</span><span class="p">[</span><span class="n">COMPKEYSZ</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+    <span class="kt">int</span> <span class="n">matchcnt</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="nc">MATCHREC</span> <span class="n">matchrec</span><span class="p">[</span><span class="n">MAX_MATCHREC</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="k">extern</span> <span class="k">struct</span> <span class="nc">DATASET</span>   <span class="n">DS1</span><span class="p">[</span><span class="n">MAX_REC</span><span class="p">];</span>
+<span class="k">extern</span> <span class="k">struct</span> <span class="nc">MATCHREC</span>   <span class="n">DS2REC</span><span class="p">;</span>
+<span class="k">extern</span> <span class="kt">long</span> <span class="kt">long</span>        <span class="n">DS1_TOTALREC</span><span class="p">;</span>
+<span class="k">extern</span> <span class="kt">char</span>             <span class="n">recbuf</span><span class="p">[</span><span class="n">RECORDSZ</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+<span class="k">extern</span> <span class="kt">char</span>            <span class="n">sep</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+<span class="k">extern</span> <span class="kt">int</span>             <span class="n">jsonfmt</span><span class="p">;</span>
+<span class="cp">#define JSONFMT     1</span>
+<span class="cp">#define NOT_JSONFMT  0</span>
+
+
+<span class="cm">/* Function : compare_ds1compkey - comparator function for qsort algorithm */</span>
+<span class="k">extern</span> <span class="kt">int</span> <span class="nf">compare_ds1compkey</span> <span class="p">(</span><span class="k">struct</span> <span class="nc">DATASET</span> <span class="o">*</span><span class="n">ds1rec1</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">DATASET</span> <span class="o">*</span><span class="n">ds1rec2</span><span class="p">);</span>
+<span class="cm">/* Function : bsearch_compare - comparator used by binary search algorithm */</span>
+<span class="k">extern</span> <span class="kt">int</span> <span class="nf">bsearch_compare</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">recbuf</span><span class="p">,</span> <span class="k">struct</span> <span class="nc">DATASET</span> <span class="o">*</span><span class="n">ds1rec</span><span class="p">);</span>
+<span class="cm">/* Function: load_dataset1 - Load small dataset which can handle upto 1,00,000 records */</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">load_dataset1</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">ds1_fname</span> <span class="p">);</span>
+<span class="cm">/* Function : join_datasets - Function which joins two datasets dataset1 &amp; dataset2 */</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">join_datasets</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">ds2_fname</span><span class="p">);</span>
+<span class="cm">/* Function : print_similar - To print similar records b/w dataset1 and dataset 2 */</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">print_similar</span><span class="p">(</span><span class="kt">void</span><span class="p">);</span>
+</code></pre></div>
+    </div><!-- /.entry-content -->
+
+  </article>
+</section>
+        <section id="extras" class="body">
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="https://twitter.com/marikannanweb">twitter</a></li>
+                            <li><a href="https://github.com/marikannan">github</a></li>
+                            <li><a href="https://www.linkedin.com/in/marikannan/">linkedin</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="https://getpelican.com/">Pelican</a>, which takes great advantage of <a href="https://www.python.org/">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="https://www.smashingmagazine.com/2009/08/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>

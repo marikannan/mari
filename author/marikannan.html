@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+        <title>marikannan's blog - marikannan</title>
+        <link rel="stylesheet" href="/theme/css/main.css" />
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+                <h1><a href="/">marikannan's blog</a></h1>
+                <nav><ul>
+                    <li><a href="/category/blog.html">blog</a></li>
+                    <li><a href="/pages/about.html">about</a></li>
+                    <li><a href="/pages/contact.html">contact</a></li>
+                </ul></nav>
+        </header><!-- /#banner -->
+
+            <aside id="featured" class="body">
+                <article>
+                    <h1 class="entry-title"><a href="/source-code-management-tool-git.html">"Source Code Management Tool - Git"</a></h1>
+<footer class="post-info">
+        <abbr class="published" title="2018-04-01T21:51:30+05:30">
+                Published: Sun 01 April 2018
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info --><p>This is post will give quick tips for working with github.</p>
+<h2>List Config</h2>
+<p>To list configuration details,</p>
+<div class="highlight"><pre><span></span><code>    git config --list
+</code></pre></div>
+
+<h2>Set Config ( global )</h2>
+<p>To set configuration parameters globally ie. to use for all repositories.</p>
+<div class="highlight"><pre><span></span><code>    git config --global user.name <span class="s2">&quot;&lt;username&gt;&quot;</span>
+    git config --global user.email <span class="s2">&quot;&lt;email address&gt;&quot;</span>
+</code></pre></div>
+
+<p>To set configuration parameters for a specific repository,</p>
+<div class="highlight"><pre><span></span><code>    git config user.name <span class="s2">&quot;&lt;username&gt;&quot;</span>
+    git config user.email <span class="s2">&quot;&lt;email address&gt;&quot;</span>
+</code></pre></div>
+
+<h2>Get local copy</h2>
+<p>To get local copy of a repository from distributed server, </p>
+<div class="highlight"><pre><span></span><code>    git clone &lt;github-url&gt;
+</code></pre></div>
+
+<h2>Publish changes</h2>
+<p>There three phases in git.</p>
+<h3>Staging area ( buffer )</h3>
+<p><code>git add</code> command is used to add the modified or new files/folders to the staging area. Note that <code>git add</code> will not give any output</p>
+<div class="highlight"><pre><span></span><code>    git add &lt;filename&gt;
+    git add .    <span class="c1"># add current directory changes</span>
+    git add -A   <span class="c1"># add all the directories. </span>
+    git status
+</code></pre></div>
+
+<h3>Local Repo:</h3>
+<p><code>git commit</code> is used to add to local repository. While commiting the files, SHA-1 key will be generated for every commit.</p>
+<div class="highlight"><pre><span></span><code>    git commit              <span class="c1"># this will open an editor to give commit message</span>
+    git commit -m <span class="s2">&quot;reason&quot;</span>  <span class="c1"># -m used to give commit message in CLI itself</span>
+    git status      <span class="c1"># will give info about files are in statging area,local repo, remote repo</span>
+                <span class="c1"># Untracked files - which are yet to add to staging</span>
+                <span class="c1"># Changes to be committed - which are in staging area</span>
+    git log
+</code></pre></div>
+
+<h3>Remote Repo</h3>
+<p><code>git push</code> is used to push the changes to the distributed repository.</p>
+<div class="highlight"><pre><span></span><code>    git push 
+    git push -u origin master
+</code></pre></div>
+
+<p>To get remote repo details,</p>
+<div class="highlight"><pre><span></span><code>    git remote -v
+</code></pre></div>
+
+<p>To rename remote repo name,</p>
+<div class="highlight"><pre><span></span><code>    git remote rename origin destination
+    git remote -v
+</code></pre></div>
+
+<h2>Some git repo stuff</h2>
+<p>To initialize git repo locally,</p>
+<div class="highlight"><pre><span></span><code>    git init 
+</code></pre></div>
+
+<p>To add remote repo for local repo,</p>
+<div class="highlight"><pre><span></span><code>    git remote add origin &lt;url&gt;
+</code></pre></div>
+
+<p>To push the current branch and set the remote as upstream,</p>
+<div class="highlight"><pre><span></span><code>    git push --set-upstream origin master
+</code></pre></div>
+
+<p>To pull the recent content from remote repo,</p>
+<div class="highlight"><pre><span></span><code>    git pull origin master
+</code></pre></div>
+
+<h2>Advance git commands</h2>
+<p>To remove Untracked files,</p>
+<div class="highlight"><pre><span></span><code>    <span class="nv">git</span> <span class="nv">clean</span> <span class="o">-</span><span class="nv">f</span>    # <span class="nv">clean</span> <span class="nv">the</span> <span class="nv">files</span>. <span class="o">-</span><span class="nv">f</span> <span class="nv">option</span> <span class="k">for</span> <span class="nv">forceful</span>
+    <span class="nv">git</span> <span class="nv">clean</span> <span class="o">-</span><span class="nv">fd</span>   # <span class="nv">clean</span> <span class="nv">file</span> <span class="nv">and</span> <span class="nv">directory</span>. <span class="o">-</span><span class="nv">f</span> <span class="nv">option</span> <span class="k">for</span> <span class="nv">forceful</span>
+</code></pre></div>
+
+<p>To remove files which are in Staging area,</p>
+<div class="highlight"><pre><span></span><code>    git reset --hard    # changes made after the commit are discarded. It resets index and working tree.
+</code></pre></div>
+
+<p>To get previous revision,</p>
+<div class="highlight"><pre><span></span><code>    git checkout &lt;filename&gt; 
+</code></pre></div>
+
+<p>To get back past commit changes,</p>
+<div class="highlight"><pre><span></span><code>    git revert &lt;commit-id-taken-from-log&gt;
+</code></pre></div>
+
+<p>To push the changes forcefully,</p>
+<div class="highlight"><pre><span></span><code>    git push -f 
+</code></pre></div>
+
+<p>To commit recent changes in a file which are already committed</p>
+<div class="highlight"><pre><span></span><code>    git commit --amend 
+</code></pre></div>
+
+<p>If we don't want file ( which had some modifications) and keep it for sometime, we can make use of stash command. The stash content will be stored in stACKing area</p>
+<div class="highlight"><pre><span></span><code>    git stash
+    git staus
+    git stash -p    # dsiplay the chunks of changes which are stashed
+    git stash list
+    git stash apply
+</code></pre></div>
+
+<p>Other useful reset commands,</p>
+<div class="highlight"><pre><span></span><code>    <span class="nv">git</span> <span class="nv">reset</span> <span class="o">--</span><span class="nv">hard</span>    # <span class="nv">changes</span> <span class="nv">made</span> <span class="nv">after</span> <span class="nv">the</span> <span class="nv">commit</span> <span class="nv">are</span> <span class="nv">discarded</span>.
+    <span class="nv">git</span> <span class="nv">reset</span> <span class="o">--</span><span class="nv">soft</span>    # <span class="nv">changes</span> <span class="nv">made</span> <span class="nv">after</span> <span class="nv">the</span> <span class="nv">commit</span> <span class="nv">are</span> <span class="nv">moved</span> <span class="nv">to</span> <span class="s2">&quot;</span><span class="s">staged for commit</span><span class="s2">&quot;</span> <span class="nv">stage</span>.
+                # <span class="nv">you</span> <span class="nv">can</span> <span class="nv">run</span> <span class="nv">git</span> <span class="nv">commit</span> <span class="nv">command</span> <span class="nv">to</span> <span class="nv">add</span> <span class="nv">files</span> <span class="nv">back</span> <span class="nv">to</span> <span class="nv">repo</span>.
+    <span class="nv">git</span> <span class="nv">reset</span>       # <span class="nv">changes</span> <span class="nv">made</span> <span class="nv">after</span> <span class="nv">commit</span> <span class="nv">are</span> <span class="nv">moved</span> <span class="nv">to</span> <span class="s2">&quot;</span><span class="s">not yet staged for commit</span><span class="s2">&quot;</span> <span class="nv">stage</span>
+</code></pre></div>
+
+<h2>To display log</h2>
+<p><code>git</code> supports both text based and graph based log histroy,</p>
+<div class="highlight"><pre><span></span><code>    git log                     # shows the log information
+    git log --graph --oneline --decorate --all  # display bit of graph
+</code></pre></div>
+
+<p>To display the list of commits to be push to remote repo,</p>
+<div class="highlight"><pre><span></span><code>    git checrry -v
+</code></pre></div>
+
+<h2>Branching Mechanism</h2>
+<div class="highlight"><pre><span></span><code>    git branch      # display the branch in use
+    git branch -a       # display list of branches 
+    git merge       # merge two branches
+    git checkout develop    # switch the branch to develop
+    git checkout -b develop master  # create a branch&#39;develop&#39; from &#39;master&#39; branch
+</code></pre></div>
+
+<p>When you are trying to merge from develop to master branch as below
+develop -&gt; master
+source -&gt; destination</p>
+<div class="highlight"><pre><span></span><code>    git checkout master
+    git merge develop
+</code></pre></div>
+
+<p>To create an alias,</p>
+<div class="highlight"><pre><span></span><code>    git config --global alias.XZ
+</code></pre></div>
+
+<p>To generate some reports of repo changes, history and logs</p>
+<div class="highlight"><pre><span></span><code>    <span class="nv">git</span> <span class="k">for</span><span class="o">-</span><span class="nv">each</span><span class="o">-</span><span class="nv">ref</span> 
+</code></pre></div>
+
+<p>To see the contents from other branch</p>
+<div class="highlight"><pre><span></span><code>    <span class="nv">git</span> <span class="k">show</span> <span class="nv">some</span><span class="o">-</span><span class="nv">branch</span>:<span class="nv">file</span>.<span class="nv">js</span>
+</code></pre></div>
+
+<p>To list files with status,</p>
+<div class="highlight"><pre><span></span><code>    git status -s
+</code></pre></div>
+
+<p>To select part of changes</p>
+<div class="highlight"><pre><span></span><code>    git add -p
+</code></pre></div>
+
+<p>To pick some changes from a commit and apply it here</p>
+<div class="highlight"><pre><span></span><code>    git cherry-pick &lt;commitSHA&gt;
+</code></pre></div>
+
+<p>Pull and merge can be done together using rebase</p>
+<div class="highlight"><pre><span></span><code>    git rebase
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>git log options,
+    - author=&quot;...&quot;
+    - name-only
+    - oneline
+    - graph
+    - reverse
+    - after
+    - before
+</code></pre></div>                </article>
+            </aside><!-- /#featured -->
+                <section id="content" class="body">
+                    <h1>Other articles</h1>
+                    <hr />
+                    <ol id="posts-list" class="hfeed">
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="/vimdiff-code-merge-tool.html" rel="bookmark"
+                           title="Permalink to "Vimdiff - code merge tool"">"Vimdiff - code merge tool"</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2016-10-19T21:47:36+05:30">
+                Published: Wed 19 October 2016
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->                <p>Just thought to post about vimdiff which can be used as a code merging tool. vimdiff package comes by default in the bundle of vim editor.</p>
+<p>vim is favourite part of any C/Unix developer. Though I worked in many GUI text editor ( EditPlus, Notepad++, gedit etc.. ) I still like …</p>
+                <a class="readmore" href="/vimdiff-code-merge-tool.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="/deploy-meteor-app-in-heroku.html" rel="bookmark"
+                           title="Permalink to "Deploy meteor app in heroku"">"Deploy meteor app in heroku"</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2016-05-08T15:24:10+05:30">
+                Published: Sun 08 May 2016
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->                <p>In this post, will give quick guide to deploy an meteor application into heroku web hosting.</p>
+<p>Assuming that you already have following prerequistes,</p>
+<ol>
+<li>Meteor js application is running in local system ( https://www.meteor.com )</li>
+<li>Install heroku in local system ( https://toolbelt.heroku.com )</li>
+<li>Heroku account ( verified ) in www.heroku …</li></ol>
+                <a class="readmore" href="/deploy-meteor-app-in-heroku.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="/meteor-framework-to-build-pure-java-script-app.html" rel="bookmark"
+                           title="Permalink to "Meteor framework to build pure java script app "">"Meteor framework to build pure java script app "</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2016-05-08T01:16:58+05:30">
+                Published: Sun 08 May 2016
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->                <p>Today came across the framework <a href="https://www.meteor.com/"><strong>Meteorjs</strong></a> which can be used to build pure javascript apps in faster way. I find it bit magical to build an meteor application though I have less understanding of front end technologies at this point of time. The app will work in web , mobile and …</p>
+                <a class="readmore" href="/meteor-framework-to-build-pure-java-script-app.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="/similarity-between-two-datasets.html" rel="bookmark"
+                           title="Permalink to "Similarity between two datasets"">"Similarity between two datasets"</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2016-04-07T06:46:58+05:30">
+                Published: Thu 07 April 2016
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->                <p>I am writing this post to demonstrate how to find the similarity between two datasets using C programming. Also to see how the efficiency of the application is increased when it is handled in algorithmic approach.</p>
+<h2>Scenario</h2>
+<p>Consider two datasets A and B each having ID, first name and last …</p>
+                <a class="readmore" href="/similarity-between-two-datasets.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="/graphics-design-workshop.html" rel="bookmark"
+                           title="Permalink to "Graphics Design - Workshop"">"Graphics Design - Workshop"</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2016-03-14T23:16:21+05:30">
+                Published: Mon 14 March 2016
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->                <p>In the last weekend, I attended the IEEE madras section workshop on "Graphics Design". Though I am core software programmer, always I have the interest in design aspects atleast to the extent I can design simple poster or e-flyer for some of the outreach programs. Most of the time, I …</p>
+                <a class="readmore" href="/graphics-design-workshop.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="/need-for-tools-specialist.html" rel="bookmark"
+                           title="Permalink to "Need for tools specialist"">"Need for tools specialist"</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2015-12-24T08:30:46+05:30">
+                Published: Thu 24 December 2015
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->                <p>As the informations and automation through machiens grow, the need for better and efficient computational / software technologies keeps on increasing. Especially in the recent decade, I am witnessing this drastic growth in information technologies. After all, all the innovations take place, is to make life easier.</p>
+<p>Using old, outdated technology …</p>
+                <a class="readmore" href="/need-for-tools-specialist.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="/network-management-and-debugging.html" rel="bookmark"
+                           title="Permalink to "Network management and debugging"">"Network management and debugging"</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2015-12-21T22:51:26+05:30">
+                Published: Mon 21 December 2015
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->                <p>In this post, I am gonna discuss few simple network troubleshooting tools and how it can be used in day to day work. </p>
+<p>Network management is the essential understanding needed for any sysadmin and unix guy. It mainly used in the below scenarios,</p>
+<ul>
+<li>failure detection of networks,gateways and other …</li></ul>
+                <a class="readmore" href="/network-management-and-debugging.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="/octopress-blog-site-setup.html" rel="bookmark"
+                           title="Permalink to "Octopress blog site setup"">"Octopress blog site setup"</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2015-12-12T11:53:18+05:30">
+                Published: Sat 12 December 2015
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->                <p>I am using octopress quite some time for my technical blog and the octopress framework is interesting but sometimes I felt difficult to setup while working in different machines.Because I need to setup the entire source code to blog a single post. So just thought to document the steps …</p>
+                <a class="readmore" href="/octopress-blog-site-setup.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+
+            <li><article class="hentry">
+                <header>
+                    <h1><a href="/password-free-ssh-login.html" rel="bookmark"
+                           title="Permalink to "Password free SSH login"">"Password free SSH login"</a></h1>
+                </header>
+
+                <div class="entry-content">
+<footer class="post-info">
+        <abbr class="published" title="2015-05-19T21:32:38+05:30">
+                Published: Tue 19 May 2015
+        </abbr>
+
+        <address class="vcard author">
+                By                         <a class="url fn" href="/author/marikannan.html">marikannan</a>
+        </address>
+<p>In <a href="/category/blog.html">blog</a>.</p>
+
+</footer><!-- /.post-info -->                <p>This post is about setting up password-free secure shell login ( ssh ) in linux machine. This is specific to SSH/SSH2 protocol. For this , I am considering two linux systems with hostnames kaveri (hostname1 -  source) and vaigai (hostname2 - client). If you wish, you could also use the ip addresses instead of …</p>
+                <a class="readmore" href="/password-free-ssh-login.html">read more</a>
+                </div><!-- /.entry-content -->
+            </article></li>
+                </ol><!-- /#posts-list -->
+<p class="paginator">
+    Page 1 / 2
+        <a href="/author/marikannan2.html">&raquo;</a>
+        <a href="/author/marikannan2.html">&#8649;</a>
+</p>
+                </section><!-- /#content -->
+        <section id="extras" class="body">
+                <div class="social">
+                        <h2>social</h2>
+                        <ul>
+
+                            <li><a href="https://twitter.com/marikannanweb">twitter</a></li>
+                            <li><a href="https://github.com/marikannan">github</a></li>
+                            <li><a href="https://www.linkedin.com/in/marikannan/">linkedin</a></li>
+                        </ul>
+                </div><!-- /.social -->
+        </section><!-- /#extras -->
+
+        <footer id="contentinfo" class="body">
+                <address id="about" class="vcard body">
+                Proudly powered by <a href="https://getpelican.com/">Pelican</a>, which takes great advantage of <a href="https://www.python.org/">Python</a>.
+                </address><!-- /#about -->
+
+                <p>The theme is by <a href="https://www.smashingmagazine.com/2009/08/designing-a-html-5-layout-from-scratch/">Smashing Magazine</a>, thanks!</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>
